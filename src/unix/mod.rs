@@ -1869,6 +1869,9 @@ cfg_if! {
     } else if #[cfg(target_os = "nto")] {
         mod nto;
         pub use self::nto::*;
+    } else if #[cfg(target_os = "nanvix")] {
+        mod nanvix;
+        pub use self::nanvix::*;
     } else if #[cfg(target_os = "aix")] {
         mod aix;
         pub use self::aix::*;
