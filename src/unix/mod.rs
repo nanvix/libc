@@ -8,6 +8,7 @@ use crate::prelude::*;
 pub type intmax_t = i64;
 pub type uintmax_t = u64;
 
+#[cfg(not(target_os = "nanvix"))]
 pub type size_t = usize;
 pub type ptrdiff_t = isize;
 pub type intptr_t = isize;
@@ -212,6 +213,7 @@ s! {
         pub p_proto: c_short,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     #[repr(align(4))]
     pub struct in6_addr {
         pub s6_addr: [u8; 16],

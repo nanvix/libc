@@ -1,6 +1,7 @@
 use std::os::nanvix::ffi::c_char;
 use std::os::nanvix::ffi::c_int;
 use std::os::nanvix::ffi::c_long;
+use std::os::nanvix::ffi::c_short;
 use std::os::nanvix::ffi::c_uchar;
 use std::os::nanvix::ffi::c_uint;
 use std::os::nanvix::ffi::c_ulong;
@@ -23,11 +24,35 @@ pub use std::os::nanvix::syscall::sys::types::pthread_mutexattr_t;
 pub use std::os::nanvix::syscall::sys::types::pthread_rwlock_t;
 pub use std::os::nanvix::syscall::sys::types::pthread_rwlockattr_t;
 pub use std::os::nanvix::syscall::sys::types::pthread_t;
+pub use std::os::nanvix::syscall::sys::types::size_t;
+pub use std::os::nanvix::syscall::sys::types::ssize_t;
 pub use std::os::nanvix::syscall::sys::types::suseconds_t;
 
+// Types in `arpa/inet.h`.
+pub use std::os::nanvix::syscall::arpa::inet::*;
+
+// `netinet/in.h`.
+pub use std::os::nanvix::syscall::netinet::in_::bindings::*;
+
+// `netinet/tcp.h`.
+pub use std::os::nanvix::syscall::netinet::tcp::*;
+
+// `sys/un.h`.
+pub use std::os::nanvix::syscall::sys::un::bindings::*;
+
+// `fcntl.h`.
+pub use std::os::nanvix::syscall::fcntl::open_flags::*;
+pub use std::os::nanvix::syscall::fcntl::F_DUPFD_CLOEXEC;
+pub use std::os::nanvix::syscall::fcntl::F_GETFD;
+pub use std::os::nanvix::syscall::fcntl::F_GETFL;
+pub use std::os::nanvix::syscall::fcntl::F_SETFD;
+pub use std::os::nanvix::syscall::fcntl::F_SETFL;
+
 // Types in `sys/socket.h`.
+pub use std::os::nanvix::syscall::sys::socket::family::*;
 pub use std::os::nanvix::syscall::sys::socket::sockaddr;
 pub use std::os::nanvix::syscall::sys::socket::socklen_t;
+pub use std::os::nanvix::syscall::sys::socket::*;
 
 // Types in `stddef.h`.
 pub use std::os::nanvix::syscall::stddef::wchar_t;
@@ -46,6 +71,9 @@ pub use std::os::nanvix::syscall::sys::resource::rlim_t;
 
 // Types in `dlfcn.h`.
 pub type Dl_info = std::os::nanvix::syscall::dlfcn::DlInfo;
+
+// `errno.h`.
+pub use std::os::nanvix::syscall::errno::*;
 
 pub type sem_t = *mut c_void;
 
@@ -151,4 +179,51 @@ pub struct sigaction {
     pub sa_flags: c_ulong,
     pub sa_restorer: Option<extern "C" fn()>,
     pub sa_mask: crate::sigset_t,
+}
+
+pub const IPV6_UNICAST_HOPS: c_int = 16;
+pub const IPV6_MULTICAST_IF: c_int = 17;
+pub const IPV6_MULTICAST_HOPS: c_int = 18;
+pub const IPV6_MULTICAST_LOOP: c_int = 19;
+pub const IPV6_ADD_MEMBERSHIP: c_int = 20;
+pub const IPV6_DROP_MEMBERSHIP: c_int = 21;
+pub const IPV6_V6ONLY: c_int = 26;
+pub const IP_ADD_MEMBERSHIP: c_int = 35;
+pub const IP_DROP_MEMBERSHIP: c_int = 36;
+
+// poll.h
+pub const POLLIN: c_short = 0x001;
+pub const POLLPRI: c_short = 0x002;
+pub const POLLOUT: c_short = 0x004;
+pub const POLLERR: c_short = 0x008;
+pub const POLLHUP: c_short = 0x010;
+pub const POLLNVAL: c_short = 0x020;
+pub const POLLRDNORM: c_short = 0x040;
+pub const POLLRDBAND: c_short = 0x080;
+pub const POLLWRNORM: c_short = 0x100;
+pub const POLLWRBAND: c_short = 0x200;
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ip_mreq {
+    pub imr_multiaddr: crate::in_addr,
+    pub imr_interface: crate::in_addr,
+}
+
+extern "C" {
+    pub fn bind(
+        socket: c_int,
+        address: *const crate::sockaddr,
+        address_len: crate::socklen_t,
+    ) -> c_int;
+
+    pub fn recvfrom(
+        socket: c_int,
+        buf: *mut c_void,
+        len: size_t,
+        flags: c_int,
+        addr: *mut crate::sockaddr,
+        addrlen: *mut crate::socklen_t,
+    ) -> ssize_t;
+
 }
