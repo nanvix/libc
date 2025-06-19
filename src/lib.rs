@@ -20,7 +20,11 @@
 // Enable extra lints:
 #![cfg_attr(feature = "extra_traits", warn(missing_debug_implementations))]
 #![warn(missing_copy_implementations, safe_packed_borrows)]
-#![cfg_attr(not(feature = "rustc-dep-of-std"), no_std)]
+#![cfg_attr(
+    all(not(feature = "rustc-dep-of-std"), not(target_os = "nanvix")),
+    no_std
+)]
+#![cfg_attr(target_os = "nanvix", feature(rustc_private))]
 #![cfg_attr(feature = "rustc-dep-of-std", no_core)]
 
 #[macro_use]
