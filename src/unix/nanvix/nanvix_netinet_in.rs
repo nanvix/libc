@@ -18,3 +18,10 @@ pub const IPV6_DROP_MEMBERSHIP: c_int = 21;
 pub const IPV6_V6ONLY: c_int = 26;
 pub const IP_ADD_MEMBERSHIP: c_int = 35;
 pub const IP_DROP_MEMBERSHIP: c_int = 36;
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ip_mreq {
+    pub imr_multiaddr: in_addr,
+    pub imr_interface: in_addr,
+}
