@@ -1,1 +1,1 @@
-pub use std::os::nanvix::syscall::errno::*;
+pub use std::os::nanvix::syscall::sysapi::errno::*;
