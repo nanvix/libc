@@ -84,6 +84,7 @@ s! {
         pub rlim_max: rlim_t,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct rusage {
         pub ru_utime: timeval,
         pub ru_stime: timeval,
@@ -134,6 +135,7 @@ s! {
         __reserved: [c_long; 16],
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct ipv6_mreq {
         pub ipv6mr_multiaddr: in6_addr,
         #[cfg(target_os = "android")]
@@ -184,6 +186,7 @@ s! {
     }
 
     // <sys/time.h>
+    #[cfg(not(target_os = "nanvix"))]
     pub struct itimerval {
         pub it_interval: crate::timeval,
         pub it_value: crate::timeval,
@@ -1228,6 +1231,7 @@ extern "C" {
 
     pub fn signal(signum: c_int, handler: sighandler_t) -> sighandler_t;
 
+    #[cfg(not(target_os = "nanvix"))]
     #[cfg_attr(target_os = "netbsd", link_name = "__getrusage50")]
     #[cfg_attr(gnu_time_bits64, link_name = "__getrusage64")]
     pub fn getrusage(resource: c_int, usage: *mut rusage) -> c_int;
