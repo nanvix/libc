@@ -246,7 +246,7 @@ cfg_if! {
     }
 }
 cfg_if! {
-    if #[cfg(not(target_os = "redox"))] {
+    if #[cfg(all(not(target_os = "redox"), not(target_os = "nanvix")))] {
         pub const FD_CLOEXEC: c_int = 0x1;
     }
 }
