@@ -1,3 +1,7 @@
+extern "C" {
+    pub fn strerror_r(errnum: c_int, buf: *mut c_char, buflen: size_t) -> c_int;
+}
+
 mod nanvix_arpa_inet;
 pub use nanvix_arpa_inet::*;
 
