@@ -3,7 +3,7 @@ use std::os::nanvix::ffi::c_ulong;
 pub type sigset_t = c_ulong;
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct sigaction {
     pub sa_sigaction: usize,
     pub sa_flags: c_ulong,

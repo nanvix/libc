@@ -1,7 +1,7 @@
 use std::os::nanvix::ffi::c_ulong;
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct statvfs {
     pub f_bsize: c_ulong,
     pub f_frsize: c_ulong,

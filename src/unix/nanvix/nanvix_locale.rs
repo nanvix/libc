@@ -1,5 +1,6 @@
 use std::os::nanvix::ffi::c_char;
 
+#[derive(Debug)]
 pub struct lconv {
     pub currency_symbol: *const c_char,
     pub decimal_point: *const c_char,

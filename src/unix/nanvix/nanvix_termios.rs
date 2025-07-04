@@ -8,7 +8,7 @@ pub type cc_t = c_uchar;
 pub const NCCS: usize = 20;
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct termios {
     pub c_iflag: tcflag_t,
     pub c_oflag: tcflag_t,

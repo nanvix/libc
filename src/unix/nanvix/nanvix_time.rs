@@ -5,6 +5,7 @@ use std::os::nanvix::ffi::c_long;
 pub use std::os::nanvix::syscall::sysapi::time::clock_ids::*;
 pub use std::os::nanvix::syscall::sysapi::time::timespec;
 
+#[derive(Debug)]
 pub struct tm {
     pub tm_sec: c_int,
     pub tm_min: c_int,
