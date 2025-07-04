@@ -1,3 +1,5 @@
+use std::os::nanvix::ffi::c_int;
+
 // from: i686-nanvix/include/sys/_default_fcntl.h
 pub const LOCK_SH: c_int = 1;  // Shared lock
 pub const LOCK_EX: c_int = 2;  // Exclusive lock  
