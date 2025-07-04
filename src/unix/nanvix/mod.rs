@@ -1,4 +1,4 @@
-use std::os::nanvix::ffi::c_int;
+use std::os::nanvix::ffi::{c_int, c_char};
 
 extern "C" {
     pub fn strerror_r(errnum: c_int, buf: *mut c_char, buflen: size_t) -> c_int;
