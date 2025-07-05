@@ -29,9 +29,19 @@ extern "C" {
     pub fn __isoc23_vsscanf(s: *const c_char, format: *const c_char, ap: va_list) -> c_int;
     
     #[link_name = "sscanf"]
-    pub fn __isoc23_sscanf(s: *const c_char, format: *const c_char, ...) -> c_int;    
+    pub fn __isoc23_sscanf(s: *const c_char, format: *const c_char, ...) -> c_int;
+
+    #[link_name = "__assert_func"]
+    pub fn __assert_fail(
+        assertion: *const c_char,
+        file: *const c_char,
+        line: c_uint,
+        function: *const c_char,
+    ) -> !;
 }
 
+#[no_mangle]
+pub static __dso_handle: *const u8 = 0 as *const u8;
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
 
