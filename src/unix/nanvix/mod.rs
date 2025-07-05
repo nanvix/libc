@@ -1,4 +1,4 @@
-use std::os::nanvix::ffi::{c_int, c_char, c_void};
+use std::os::nanvix::ffi::{c_int, c_char, c_void, c_uint};
 use crate::FILE;
 
 extern "C" {
@@ -41,7 +41,7 @@ extern "C" {
 }
 
 #[no_mangle]
-pub static __dso_handle: *const u8 = 0 as *const u8;
+pub static mut __dso_handle: usize = 0;
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
 
