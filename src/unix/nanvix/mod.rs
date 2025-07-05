@@ -1,4 +1,5 @@
 use std::os::nanvix::ffi::{c_int, c_char, c_void};
+use crate::FILE;
 
 extern "C" {
     pub fn strerror_r(errnum: c_int, buf: *mut c_char, buflen: size_t) -> c_int;
@@ -14,7 +15,25 @@ extern "C" {
     
     // From sys/unistd.h
     pub fn dup3(oldfd: c_int, newfd: c_int, flags: c_int) -> c_int;
+
+    #[link_name = "fopen"]
+    pub fn fopen64(filename: *const c_char, mode: *const c_char) -> *mut FILE;
+    
+    #[link_name = "fseeko"]
+    pub fn fseeko64(stream: *mut FILE, offset: off64_t, whence: c_int) -> c_int;
+    
+    #[link_name = "ftello"]
+    pub fn ftello64(stream: *mut FILE) -> off64_t;
+
+    #[link_name = "vsscanf"]
+    pub fn __isoc23_vsscanf(s: *const c_char, format: *const c_char, ap: va_list) -> c_int;
+    
+    #[link_name = "sscanf"]
+    pub fn __isoc23_sscanf(s: *const c_char, format: *const c_char, ...) -> c_int;    
 }
+
+pub type off64_t = i64;
+pub type va_list = *mut c_char;
 
 // Common ioctl commands - these values are fairly standard across Unix systems
 pub const FIONBIO: c_int = 0x5421;   // Set/clear non-blocking I/O
