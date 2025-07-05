@@ -45,6 +45,10 @@ pub const EUCLEAN: c_int = EIO;          // Needs cleaning -> I/O error
 pub const _SC_CLK_TCK: c_int = 2;
 pub const _SC_PAGESIZE: c_int = 8;
 pub const _SC_PAGE_SIZE: c_int = _SC_PAGESIZE;
+pub const F_OK: c_int = 0;  // File existence
+pub const R_OK: c_int = 4;  // Read permission
+pub const W_OK: c_int = 2;  // Write permission  
+pub const X_OK: c_int = 1;  // Execute permission
 
 mod nanvix_arpa_inet;
 pub use nanvix_arpa_inet::*;
