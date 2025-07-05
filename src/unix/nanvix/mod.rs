@@ -16,6 +16,13 @@ extern "C" {
     pub fn dup3(oldfd: c_int, newfd: c_int, flags: c_int) -> c_int;
 }
 
+// Common ioctl commands - these values are fairly standard across Unix systems
+pub const FIONBIO: c_int = 0x5421;   // Set/clear non-blocking I/O
+pub const FIONREAD: c_int = 0x541B;  // Get number of bytes to read
+
+// Opcode type for ioctl operations
+pub type _Opcode = c_int;
+
 // Special handle used by dlsym, 0 is common for most Unix systems here.
 pub const RTLD_DEFAULT: *mut c_void = 0 as *mut c_void;
 
