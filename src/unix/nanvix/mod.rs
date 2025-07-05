@@ -1,6 +1,4 @@
-use std::os::nanvix::ffi::{c_int, c_char, c_void, c_ulong};
-
-pub type ioctl_command_t = c_ulong;
+use std::os::nanvix::ffi::{c_int, c_char, c_void};
 
 extern "C" {
     pub fn strerror_r(errnum: c_int, buf: *mut c_char, buflen: size_t) -> c_int;
@@ -12,7 +10,7 @@ extern "C" {
     pub fn pwritev(fd: c_int, iov: *const iovec, iovcnt: c_int, offset: off_t) -> ssize_t;
 
     // From sys/ioccom.h
-    pub fn ioctl(fd: c_int, request: ioctl_command_t, ...) -> c_int;
+    pub fn ioctl(fd: c_int, request: c_int, ...) -> c_int;
     
     // From sys/unistd.h
     pub fn dup3(oldfd: c_int, newfd: c_int, flags: c_int) -> c_int;
