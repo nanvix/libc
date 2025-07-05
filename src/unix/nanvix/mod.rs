@@ -1,8 +1,45 @@
-use std::os::nanvix::ffi::{c_int, c_char};
+use std::os::nanvix::ffi::{c_int, c_char, c_void, c_ulong};
+
+pub type ioctl_command_t = c_ulong;
 
 extern "C" {
     pub fn strerror_r(errnum: c_int, buf: *mut c_char, buflen: size_t) -> c_int;
+
+    // From sys/uio.h
+    pub fn readv(fd: c_int, iov: *const iovec, iovcnt: c_int) -> ssize_t;
+    pub fn writev(fd: c_int, iov: *const iovec, iovcnt: c_int) -> ssize_t;
+    pub fn preadv(fd: c_int, iov: *const iovec, iovcnt: c_int, offset: off_t) -> ssize_t;
+    pub fn pwritev(fd: c_int, iov: *const iovec, iovcnt: c_int, offset: off_t) -> ssize_t;
+
+    // From sys/ioccom.h
+    pub fn ioctl(fd: c_int, request: ioctl_command_t, ...) -> c_int;
+    
+    // From sys/unistd.h
+    pub fn dup3(oldfd: c_int, newfd: c_int, flags: c_int) -> c_int;
 }
+
+// Special handle used by dlsym, 0 is common for most Unix systems here.
+pub const RTLD_DEFAULT: *mut c_void = 0 as *mut c_void;
+
+// Map Linux-specific errors to closest Nanvix equivalents
+pub const EHWPOISON: c_int = EIO;        // Hardware error -> I/O error
+pub const EISNAM: c_int = EINVAL;        // Named type file -> Invalid argument
+pub const EKEYEXPIRED: c_int = EACCES;   // Key expired -> Permission denied
+pub const EKEYREJECTED: c_int = EACCES;  // Key rejected -> Permission denied
+pub const EKEYREVOKED: c_int = EACCES;   // Key revoked -> Permission denied
+pub const EMEDIUMTYPE: c_int = EINVAL;   // Wrong medium -> Invalid argument
+pub const ENAVAIL: c_int = ENOSYS;       // XENIX not available -> Not implemented
+pub const ENOKEY: c_int = ENOENT;        // No key -> No such entry
+pub const ENOTNAM: c_int = EINVAL;       // Not XENIX file -> Invalid argument
+pub const EREMOTEIO: c_int = EIO;        // Remote I/O error -> I/O error
+pub const ERESTART: c_int = EINTR;       // Restart syscall -> Interrupted
+pub const ERFKILL: c_int = EACCES;       // RF-kill -> Permission denied
+pub const EUCLEAN: c_int = EIO;          // Needs cleaning -> I/O error
+
+// from: i686-nanvix/include/sys/unistd.h
+pub const _SC_CLK_TCK: c_int = 2;
+pub const _SC_PAGESIZE: c_int = 8;
+pub const _SC_PAGE_SIZE: c_int = _SC_PAGESIZE;
 
 mod nanvix_arpa_inet;
 pub use nanvix_arpa_inet::*;
