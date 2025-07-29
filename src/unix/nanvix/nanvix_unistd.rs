@@ -1,6 +1,6 @@
 pub use std::os::nanvix::syscall::sysapi::unistd::file_seek::*;
 pub use std::os::nanvix::syscall::sysapi::unistd::getentropy;
-pub use std::os::nanvix::syscall::unistd::*;
+pub use std::os::nanvix::syscall::unistd::bindings::*;
 pub use std::os::nanvix::syscall::sysapi::unistd::STDERR_FILENO;
 pub use std::os::nanvix::syscall::sysapi::unistd::STDIN_FILENO;
 pub use std::os::nanvix::syscall::sysapi::unistd::STDOUT_FILENO;
