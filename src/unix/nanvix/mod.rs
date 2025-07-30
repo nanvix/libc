@@ -193,3 +193,8 @@ pub use nanvix_time::*;
 // `unistd.h`
 mod nanvix_unistd;
 pub use nanvix_unistd::*;
+
+// TODO: I'm adding methods there to try to fulfill the symbols needed by rusty_v8, we should
+// probably move them to a more appropriate place later.
+mod nanvix_tmp;
+pub use nanvix_tmp::*;
