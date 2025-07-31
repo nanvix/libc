@@ -41,11 +41,9 @@ extern "C" {
 
 }
 
-#[no_mangle]
 #[used]
 #[export_name = "__dso_handle"]
-#[link_section = ".data"]
-pub static __dso_handle: *const u8 = 0 as *const u8;
+pub static __dso_handle: i32 = 0;
 
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
