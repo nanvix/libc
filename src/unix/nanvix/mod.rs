@@ -38,11 +38,14 @@ extern "C" {
         line: c_uint,
         function: *const c_char,
     ) -> !;
+
+    #[no_mangle]
+    pub static mut __dso_handle: usize;
 }
 
 #[no_mangle]
 #[used]
-pub extern "C" static mut __dso_handle: usize = 0;
+pub static mut __dso_handle: usize = 0;
 
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
