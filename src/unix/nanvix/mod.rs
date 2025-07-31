@@ -41,9 +41,9 @@ extern "C" {
 
 }
 
-#[no_mangle]
-#[used]
-pub static mut __dso_handle: *mut u8 = 0 as *mut u8;
+#[allow(non_upper_case_globals)]
+#[unsafe(no_mangle)]
+pub static __dso_handle: u8 = 0;
 
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
