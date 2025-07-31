@@ -39,8 +39,11 @@ extern "C" {
         function: *const c_char,
     ) -> !;
 
-    pub static mut __dso_handle: usize;
 }
+
+#[no_mangle]
+#[used]
+pub static mut __dso_handle: *mut u8 = 0 as *mut u8;
 
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
