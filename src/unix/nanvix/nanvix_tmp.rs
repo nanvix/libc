@@ -1,7 +1,7 @@
 #![allow(unused_imports)]
 pub use std::os::nanvix::syscall::pthread::bindings::{
-    pthread_attr_destroy::pthread_attr_destroy, pthread_attr_init::pthread_attr_init,
-    pthread_attr_setstacksize::pthread_attr_setstacksize,
+    pthread_atfork::pthread_atfork, pthread_attr_destroy::pthread_attr_destroy,
+    pthread_attr_init::pthread_attr_init, pthread_attr_setstacksize::pthread_attr_setstacksize,
     pthread_cond_broadcast::pthread_cond_broadcast, pthread_cond_destroy::pthread_cond_destroy,
     pthread_cond_init::pthread_cond_init, pthread_cond_signal::pthread_cond_signal,
     pthread_cond_timedwait::pthread_cond_timedwait, pthread_cond_wait::pthread_cond_wait,
