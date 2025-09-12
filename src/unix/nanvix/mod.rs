@@ -48,6 +48,21 @@ pub static __dso_handle: i32 = 0;
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
 
+// Signal info structure - simplified version for Nanvix
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct siginfo_t {
+    pub si_signo: c_int,
+    pub si_errno: c_int,
+    pub si_code: c_int,
+    pub si_pid: c_int,
+    pub si_uid: c_int,
+    pub si_addr: *mut c_void,
+    pub si_status: c_int,
+    pub si_band: c_int,
+    pub si_value: c_int,
+}
+
 // Common ioctl commands - these values are fairly standard across Unix systems
 pub const FIONBIO: c_int = 0x5421;   // Set/clear non-blocking I/O
 pub const FIONREAD: c_int = 0x541B;  // Get number of bytes to read
@@ -81,6 +96,17 @@ pub const F_OK: c_int = 0;  // File existence
 pub const R_OK: c_int = 4;  // Read permission
 pub const W_OK: c_int = 2;  // Write permission  
 pub const X_OK: c_int = 1;  // Execute permission
+
+// Signal constants - standard Unix values for Nanvix
+pub const SIGFPE: c_int = 8;     // Floating-point exception
+pub const SIGILL: c_int = 4;     // Illegal instruction
+pub const SIGKILL: c_int = 9;    // Kill signal
+pub const SIGSEGV: c_int = 11;   // Segmentation violation
+pub const SIGSTOP: c_int = 19;   // Stop signal
+
+// Signal action flags
+pub const SA_RESTART: c_int = 0x10000000;  // Restart syscall on signal return
+pub const SA_SIGINFO: c_int = 0x00000004;  // Use sa_sigaction instead of sa_handler
 
 mod nanvix_arpa_inet;
 pub use nanvix_arpa_inet::*;
