@@ -9,6 +9,9 @@ pub const LOCK_UN: c_int = 8;  // Unlock
 // from: i686-nanvix/include/sys/errno.h
 pub const EWOULDBLOCK: c_int = 11;
 
+// From nanvix/sysapi/fcntl/file_status_flags
+pub const O_NONBLOCK: c_int = 0x4000;
+
 pub use std::os::nanvix::syscall::sysapi::fcntl::atflags::*;
 pub use std::os::nanvix::syscall::sysapi::fcntl::file_access_mode::*;
 pub use std::os::nanvix::syscall::sysapi::fcntl::file_advice::*;
