@@ -104,6 +104,19 @@ pub const SIGKILL: c_int = 9;    // Kill signal
 pub const SIGSEGV: c_int = 11;   // Segmentation violation
 pub const SIGSTOP: c_int = 19;   // Stop signal
 
+// Additional signal constants needed by tokio and other applications
+pub const SIGALRM: c_int = 14;   // Timer alarm signal
+pub const SIGCHLD: c_int = 17;   // Child status changed
+pub const SIGHUP: c_int = 1;     // Hangup
+pub const SIGINT: c_int = 2;     // Interrupt (Ctrl+C)
+pub const SIGIO: c_int = 29;     // I/O now possible
+pub const SIGPIPE: c_int = 13;   // Broken pipe
+pub const SIGQUIT: c_int = 3;    // Quit (Ctrl+\)
+pub const SIGTERM: c_int = 15;   // Termination signal
+pub const SIGUSR1: c_int = 10;   // User-defined signal 1
+pub const SIGUSR2: c_int = 12;   // User-defined signal 2
+pub const SIGWINCH: c_int = 28;  // Window size changed
+
 // Signal action flags
 pub const SA_RESTART: c_int = 0x10000000;  // Restart syscall on signal return
 pub const SA_SIGINFO: c_int = 0x00000004;  // Use sa_sigaction instead of sa_handler
