@@ -5,7 +5,7 @@ pub use std::os::nanvix::syscall::pthread::bindings::{
     pthread_cond_broadcast::pthread_cond_broadcast, pthread_cond_destroy::pthread_cond_destroy,
     pthread_cond_init::pthread_cond_init, pthread_cond_signal::pthread_cond_signal,
     pthread_cond_timedwait::pthread_cond_timedwait, pthread_cond_wait::pthread_cond_wait,
-    pthread_condattr_setclock::pthread_condattr_setclock, pthread_create::pthread_create,
+    pthread_condattr_destroy::pthread_condattr_destroy, pthread_condattr_setclock::pthread_condattr_setclock, pthread_create::pthread_create,
     pthread_getschedparam::pthread_getschedparam, pthread_getspecific::pthread_getspecific,
     pthread_join::pthread_join, pthread_key_create::pthread_key_create, pthread_kill::pthread_kill,
     pthread_mutex_destroy::pthread_mutex_destroy, pthread_mutex_init::pthread_mutex_init,

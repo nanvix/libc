@@ -41,10 +41,6 @@ extern "C" {
 
 }
 
-#[used]
-#[export_name = "__dso_handle"]
-pub static __dso_handle: i32 = 0;
-
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
 
