@@ -18,10 +18,6 @@ pub use std::os::nanvix::syscall::pthread::bindings::{
 };
 pub use std::os::nanvix::syscall::sched::bindings::sched_yield::sched_yield;
 pub use std::os::nanvix::syscall::signal::bindings::{kill::kill, sigaction::sigaction};
-pub use std::os::nanvix::syscall::stdlib::bindings::{
-    aligned_alloc::{__aligned_free, __aligned_malloc},
-    posix_memalign::posix_memalign,
-};
 pub use std::os::nanvix::syscall::sys::mman::bindings::{
     mmap::mmap, mprotect::mprotect, munmap::munmap,
 };
