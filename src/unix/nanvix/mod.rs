@@ -41,10 +41,6 @@ extern "C" {
 
 }
 
-#[used]
-#[export_name = "__dso_handle"]
-pub static __dso_handle: i32 = 0;
-
 pub type off64_t = i64;
 pub type va_list = *mut c_char;
 
@@ -120,6 +116,21 @@ pub const SIGWINCH: c_int = 28;  // Window size changed
 // Signal action flags
 pub const SA_RESTART: c_int = 0x10000000;  // Restart syscall on signal return
 pub const SA_SIGINFO: c_int = 0x00000004;  // Use sa_sigaction instead of sa_handler
+
+// These are duplicate from Nanvix, should consolidate
+pub const PROT_NONE: c_int = 0x0;    // No access permissions
+pub const PROT_READ: c_int = 0x1;    // Read permission
+pub const PROT_WRITE: c_int = 0x2;   // Write permission
+pub const PROT_EXEC: c_int = 0x4;    // Execute permission
+
+pub const MAP_PRIVATE: c_int = 0x02;  // Private copy-on-write mapping
+pub const MAP_SHARED: c_int = 0x01;   // Share changes
+pub const MAP_ANON: c_int = 0x20;     // Anonymous mapping (not backed by file)
+pub const MAP_ANONYMOUS: c_int = MAP_ANON;  // Alternative name for MAP_ANON
+pub const MAP_FIXED: c_int = 0x10;    // Interpret addr exactly
+
+// MAP_FAILED is typically (void *) -1
+pub const MAP_FAILED: *mut c_void = !0 as *mut c_void;
 
 mod nanvix_arpa_inet;
 pub use nanvix_arpa_inet::*;
