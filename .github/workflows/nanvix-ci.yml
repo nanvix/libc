@@ -1,0 +1,46 @@
+name: Nanvix CI
+
+on:
+  push:
+    branches:
+      - 'nanvix/**'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - 'nanvix/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nanvix-ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Cargo artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: nanvix-ci-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            nanvix-ci-${{ runner.os }}-${{ github.ref_name }}-
+            nanvix-ci-${{ runner.os }}-
+
+      - name: Toolchain diagnostics
+        run: |
+          rustc +nanvix-x86 -V
+          cargo +nanvix-x86 -V
+          rustup show
+
+      - name: Build
+        run: cargo +nanvix-x86 build --verbose
