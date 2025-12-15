@@ -19,6 +19,11 @@ concurrency:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - i686-unknown-nanvix
     runs-on: [self-hosted]
     steps:
       - name: Checkout repository
@@ -43,4 +48,4 @@ jobs:
           rustup show
 
       - name: Build
-        run: cargo +nanvix-x86 build --verbose
+        run: cargo +nanvix-x86 build --verbose --target ${{ matrix.target }}
