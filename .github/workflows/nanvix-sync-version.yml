@@ -78,6 +78,7 @@ jobs:
             WORKTREE_PATH="$WORKTREE_ROOT/$SAFE_BRANCH"
 
             echo "::group::Branch $BRANCH"
+            rm -rf "$WORKTREE_PATH"
             git worktree add -B "$WORK_BRANCH" "$WORKTREE_PATH" "origin/$BRANCH" >/dev/null 2>&1
 
             pushd "$WORKTREE_PATH" >/dev/null
