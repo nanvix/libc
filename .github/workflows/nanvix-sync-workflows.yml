@@ -5,6 +5,13 @@
 name: Sync Nanvix Workflows
 
 on:
+  # Nightly run ensures long-lived branches do not drift from defaults.
+  schedule:
+    - cron: "0 0 * * *"
+  # Automatically re-sync whenever nanvix/* branches receive direct pushes.
+  push:
+    branches:
+      - 'nanvix/**'
   # Manual trigger allows overriding the default file/branch patterns when needed.
   workflow_dispatch:
     inputs:
@@ -23,13 +30,6 @@ on:
         required: false
         default: "ppenna"
         type: string
-  # Nightly run ensures long-lived branches do not drift from defaults.
-  schedule:
-    - cron: "0 0 * * *"
-  # Automatically re-sync whenever nanvix/* branches receive direct pushes.
-  push:
-    branches:
-      - 'nanvix/**'
 
 permissions:
   contents: write
