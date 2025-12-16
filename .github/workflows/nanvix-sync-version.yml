@@ -130,16 +130,27 @@ jobs:
                 ensure_assignment "$EXISTING_PR"
                 echo "Updated existing PR #$EXISTING_PR"
               else
-                NEW_PR_NUMBER=$(gh pr create \
+                PR_URL=$(gh pr create \
                   --repo "$REPOSITORY" \
                   --title "$PR_TITLE" \
                   --body "$PR_BODY" \
                   --base "$BRANCH" \
-                  --head "$WORK_BRANCH" \
-                  --json number \
-                  --jq '.number')
-                ensure_assignment "$NEW_PR_NUMBER"
-                echo "Opened PR #$NEW_PR_NUMBER for $BRANCH"
+                  --head "$WORK_BRANCH")
+
+                NEW_PR_NUMBER=""
+                if [ -n "$PR_URL" ]; then
+                  CANDIDATE="${PR_URL##*/}"
+                  if [[ "$CANDIDATE" =~ ^[0-9]+$ ]]; then
+                    NEW_PR_NUMBER="$CANDIDATE"
+                  fi
+                fi
+
+                if [ -z "$NEW_PR_NUMBER" ]; then
+                  echo "Warning: could not determine PR number from output: $PR_URL"
+                else
+                  ensure_assignment "$NEW_PR_NUMBER"
+                  echo "Opened PR #$NEW_PR_NUMBER for $BRANCH"
+                fi
               fi
             else
               echo "Branch $BRANCH already has matching workflow files."
