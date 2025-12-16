@@ -1,4 +1,3 @@
-
 # Keeps workflow files whose names share a configurable prefix in sync across
 # branches matching a target prefix. It copies the files from the repository's
 # default branch, opens (or refreshes) one PR per branch when changes exist.
@@ -6,6 +5,13 @@
 name: Sync Nanvix Workflows
 
 on:
+  # Nightly run ensures long-lived branches do not drift from defaults.
+  schedule:
+    - cron: "0 0 * * *"
+  # Automatically re-sync whenever nanvix/* branches receive direct pushes.
+  push:
+    branches:
+      - 'nanvix/**'
   # Manual trigger allows overriding the default file/branch patterns when needed.
   workflow_dispatch:
     inputs:
@@ -24,20 +30,13 @@ on:
         required: false
         default: "ppenna"
         type: string
-  # Nightly run ensures long-lived branches do not drift from defaults.
-  schedule:
-    - cron: "0 0 * * *"
-  # Automatically re-sync whenever nanvix/* branches receive direct pushes.
-  push:
-    branches:
-      - 'nanvix/**'
 
 permissions:
   contents: write
   pull-requests: write
 
 concurrency:
-  group: nanvix-sync-version
+  group: nanvix-sync-workflows
   cancel-in-progress: false
 
 jobs:
