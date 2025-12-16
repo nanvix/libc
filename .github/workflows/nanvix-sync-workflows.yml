@@ -1,0 +1,44 @@
+name: Sync Nanvix Workflows
+
+on:
+  workflow_dispatch:
+    inputs:
+      sync_target_pattern:
+        description: Prefix (relative to repo root) used to select workflow files to mirror
+        required: false
+        default: ".github/workflows/nanvix-"
+        type: string
+      target_branch_prefix:
+        description: Branch name prefix eligible for synchronization
+        required: false
+        default: "nanvix/"
+        type: string
+      assignee:
+        description: GitHub user that should be assigned to opened PRs
+        required: false
+        default: "ppenna"
+        type: string
+  schedule:
+    - cron: "0 0 * * *"
+  push:
+    branches:
+      - 'nanvix/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: nanvix-sync-version
+  cancel-in-progress: false
+
+jobs:
+  sync-workflows:
+    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    uses: nanvix/workflows/.github/workflows/sync-workflows.yml@main
+    with:
+      sync_target_pattern: (github.event_name == 'workflow_dispatch' && github.event.inputs.sync_target_pattern) || '.github/workflows/nanvix-' }}
+      target_branch_prefix: (github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch_prefix) || 'nanvix/' }}
+      assignee: (github.event_name == 'workflow_dispatch' && github.event.inputs.assignee) || 'ppenna' }}
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
