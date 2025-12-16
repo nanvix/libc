@@ -83,22 +83,24 @@ jobs:
             pushd "$WORKTREE_PATH" >/dev/null
 
             CHANGED=0
+            COPIED_FILES=()
             for FILE in $SYNC_TARGETS; do
               if git -C "$GITHUB_WORKSPACE" cat-file -e "origin/$DEFAULT_BRANCH:$FILE" 2>/dev/null; then
                 mkdir -p "$(dirname "$FILE")"
                 git -C "$GITHUB_WORKSPACE" show "origin/$DEFAULT_BRANCH:$FILE" > "$FILE"
+                COPIED_FILES+=("$FILE")
               else
                 echo "File $FILE does not exist on $DEFAULT_BRANCH; skipping."
                 continue
               fi
             done
 
-            if git status --short -- $SYNC_TARGETS | grep -q .; then
+            if [ "${#COPIED_FILES[@]}" -gt 0 ] && git status --short -- "${COPIED_FILES[@]}" | grep -q .; then
               CHANGED=1
             fi
 
             if [ "$CHANGED" -eq 1 ]; then
-              git add $SYNC_TARGETS
+              git add "${COPIED_FILES[@]}"
               git commit -m "Sync workflows from $DEFAULT_BRANCH"
               git push origin "$WORK_BRANCH" --force-with-lease
               UPDATED_BRANCHES+=("$BRANCH")
