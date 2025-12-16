@@ -1,4 +1,3 @@
-
 # Keeps workflow files whose names share a configurable prefix in sync across
 # branches matching a target prefix. It copies the files from the repository's
 # default branch, opens (or refreshes) one PR per branch when changes exist.
@@ -37,7 +36,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: nanvix-sync-version
+  group: nanvix-sync-workflows
   cancel-in-progress: false
 
 jobs:
