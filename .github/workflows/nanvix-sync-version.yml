@@ -3,7 +3,10 @@ name: nanvix-sync-version
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: "0 0 * * *"
+  push:
+    branches:
+      - 'nanvix/**'
 
 permissions:
   contents: write
@@ -16,6 +19,7 @@ concurrency:
 jobs:
   sync-workflows:
     name: Synchronize nanvix workflows
+    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     runs-on: ubuntu-latest
     env:
       SYNC_TARGET_PATTERN: ".github/workflows/nanvix-"
