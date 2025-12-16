@@ -1,6 +1,8 @@
 name: Nanvix CI
 
 on:
+  schedule:
+    - cron: "0 0 * * *"
   push:
     branches:
       - 'nanvix/**'
@@ -9,9 +11,12 @@ on:
     branches:
       - 'nanvix/**'
   workflow_dispatch:
+  repository_dispatch:
+    types: [nanvix-major-release]
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: nanvix-ci-${{ github.event_name }}-${{ github.ref }}
@@ -47,3 +52,32 @@ jobs:
 
       - name: Build
         run: cargo +nanvix-x86 build --verbose --target ${{ matrix.target }}
+
+  report-failure:
+    needs: build
+    if: ${{ failure() && github.event_name == 'repository_dispatch' && github.event.action == 'nanvix-major-release' }}
+    runs-on: [self-hosted]
+    steps:
+      - name: Create Failure Issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = `Nanvix major release CI failure (run #${context.runNumber})`;
+            const body = [
+              'The Nanvix major release CI workflow triggered by a major release failed.',
+              '',
+              `- **Workflow**: ${context.workflow}`,
+              `- **Run**: ${runUrl}`,
+              `- **Event**: ${context.eventName}/${context.payload.action}`,
+              '',
+              'Please investigate the failing targets and take corrective action.'
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              assignees: ['ppenna'],
+            });
