@@ -37,8 +37,8 @@ jobs:
     if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     uses: nanvix/workflows/.github/workflows/sync-workflows.yml@main
     with:
-      sync_target_pattern: (github.event_name == 'workflow_dispatch' && github.event.inputs.sync_target_pattern) || '.github/workflows/nanvix-' }}
-      target_branch_prefix: (github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch_prefix) || 'nanvix/' }}
-      assignee: (github.event_name == 'workflow_dispatch' && github.event.inputs.assignee) || 'ppenna' }}
+      sync_target_pattern: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.sync_target_pattern) || '.github/workflows/nanvix-' }}
+      target_branch_prefix: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch_prefix) || 'nanvix/' }}
+      assignee: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.assignee) || 'ppenna' }}
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
