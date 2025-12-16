@@ -8,6 +8,7 @@ use crate::prelude::*;
 pub type intmax_t = i64;
 pub type uintmax_t = u64;
 
+#[cfg(not(target_os = "nanvix"))]
 pub type size_t = usize;
 pub type ptrdiff_t = isize;
 pub type intptr_t = isize;
@@ -56,6 +57,7 @@ s! {
         pub modtime: time_t,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     // FIXME(time): Needs updates at least for glibc _TIME_BITS=64
     pub struct timeval {
         pub tv_sec: time_t,
@@ -64,6 +66,7 @@ s! {
 
     // linux x32 compatibility
     // See https://sourceware.org/bugzilla/show_bug.cgi?id=16437
+    #[cfg(not(target_os = "nanvix"))]
     pub struct timespec {
         pub tv_sec: time_t,
         #[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
@@ -72,6 +75,7 @@ s! {
         pub tv_nsec: c_long,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct rlimit {
         pub rlim_cur: rlim_t,
         pub rlim_max: rlim_t,
@@ -135,7 +139,7 @@ s! {
         pub ipv6mr_interface: c_uint,
     }
 
-    #[cfg(not(target_os = "cygwin"))]
+    #[cfg(all(not(target_os = "cygwin"), not(target_os = "nanvix")))]
     pub struct hostent {
         pub h_name: *mut c_char,
         pub h_aliases: *mut *mut c_char,
@@ -144,11 +148,13 @@ s! {
         pub h_addr_list: *mut *mut c_char,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct iovec {
         pub iov_base: *mut c_void,
         pub iov_len: size_t,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct pollfd {
         pub fd: c_int,
         pub events: c_short,
@@ -162,7 +168,7 @@ s! {
         pub ws_ypixel: c_ushort,
     }
 
-    #[cfg(not(target_os = "cygwin"))]
+    #[cfg(all(not(target_os = "cygwin"), not(target_os = "nanvix")))]
     pub struct linger {
         pub l_onoff: c_int,
         pub l_linger: c_int,
@@ -180,6 +186,7 @@ s! {
     }
 
     // <sys/times.h>
+    #[cfg(not(target_os = "nanvix"))]
     pub struct tms {
         pub tms_utime: crate::clock_t,
         pub tms_stime: crate::clock_t,
@@ -187,6 +194,7 @@ s! {
         pub tms_cstime: crate::clock_t,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct servent {
         pub s_name: *mut c_char,
         pub s_aliases: *mut *mut c_char,
@@ -197,6 +205,7 @@ s! {
         pub s_proto: *mut c_char,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct protoent {
         pub p_name: *mut c_char,
         pub p_aliases: *mut *mut c_char,
@@ -206,6 +215,7 @@ s! {
         pub p_proto: c_short,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     #[repr(align(4))]
     pub struct in6_addr {
         pub s6_addr: [u8; 16],
@@ -232,7 +242,7 @@ cfg_if! {
     }
 }
 cfg_if! {
-    if #[cfg(not(target_os = "redox"))] {
+    if #[cfg(all(not(target_os = "redox"), not(target_os = "nanvix")))] {
         pub const FD_CLOEXEC: c_int = 0x1;
     }
 }
@@ -1759,6 +1769,9 @@ cfg_if! {
     } else if #[cfg(target_os = "nto")] {
         mod nto;
         pub use self::nto::*;
+    } else if #[cfg(target_os = "nanvix")] {
+        mod nanvix;
+        pub use self::nanvix::*;
     } else if #[cfg(target_os = "aix")] {
         mod aix;
         pub use self::aix::*;
