@@ -1,7 +1,49 @@
 name: Nanvix Sync Versions
 
 on:
+  workflow_call:
+    inputs:
+      sync_target_pattern:
+        description: Prefix (relative to repo root) used to select workflow files to mirror
+        type: string
+        default: ".github/workflows/nanvix-"
+      target_branch_prefix:
+        description: Branch name prefix eligible for synchronization
+        type: string
+        default: "nanvix/"
+      assignee:
+        description: GitHub user that should be assigned to opened PRs
+        type: string
+        default: "ppenna"
+      default_branch:
+        description: Override for the repository default branch name
+        type: string
+        default: ""
+    secrets:
+      GH_TOKEN:
+        required: true
   workflow_dispatch:
+    inputs:
+      sync_target_pattern:
+        description: Prefix (relative to repo root) used to select workflow files to mirror
+        required: false
+        default: ".github/workflows/nanvix-"
+        type: string
+      target_branch_prefix:
+        description: Branch name prefix eligible for synchronization
+        required: false
+        default: "nanvix/"
+        type: string
+      assignee:
+        description: GitHub user that should be assigned to opened PRs
+        required: false
+        default: "ppenna"
+        type: string
+      default_branch:
+        description: Override for the repository default branch name
+        required: false
+        default: ""
+        type: string
   schedule:
     - cron: "0 0 * * *"
   push:
@@ -22,7 +64,10 @@ jobs:
     if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     runs-on: ubuntu-latest
     env:
-      SYNC_TARGET_PATTERN: ".github/workflows/nanvix-"
+      SYNC_TARGET_PATTERN: ${{ (github.event_name == 'workflow_call' && inputs.sync_target_pattern) || (github.event_name == 'workflow_dispatch' && github.event.inputs.sync_target_pattern) || '.github/workflows/nanvix-' }}
+      TARGET_BRANCH_PREFIX: ${{ (github.event_name == 'workflow_call' && inputs.target_branch_prefix) || (github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch_prefix) || 'nanvix/' }}
+      ASSIGNEE_TARGET: ${{ (github.event_name == 'workflow_call' && inputs.assignee) || (github.event_name == 'workflow_dispatch' && github.event.inputs.assignee) || 'ppenna' }}
+      DEFAULT_BRANCH_OVERRIDE: ${{ (github.event_name == 'workflow_call' && inputs.default_branch) || (github.event_name == 'workflow_dispatch' && github.event.inputs.default_branch) || '' }}
       REPOSITORY: ${{ github.repository }}
       REPOSITORY_OWNER: ${{ github.repository_owner }}
       DEFAULT_BRANCH_FALLBACK: ${{ github.event.repository.default_branch }}
@@ -39,7 +84,7 @@ jobs:
 
       - name: Sync nanvix workflow files
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
@@ -48,7 +93,10 @@ jobs:
             exit 1
           fi
 
-          DEFAULT_BRANCH="$DEFAULT_BRANCH_FALLBACK"
+          DEFAULT_BRANCH="$DEFAULT_BRANCH_OVERRIDE"
+          if [ -z "$DEFAULT_BRANCH" ]; then
+            DEFAULT_BRANCH="$DEFAULT_BRANCH_FALLBACK"
+          fi
           if [ -z "$DEFAULT_BRANCH" ]; then
             DEFAULT_BRANCH=$(gh repo view "$REPOSITORY" --json defaultBranchRef --jq '.defaultBranchRef.name')
           fi
@@ -56,9 +104,10 @@ jobs:
 
           git fetch origin --prune
 
+          SYNC_REGEX="^${SYNC_TARGET_PATTERN//./\.}.*\.ya?ml$"
           mapfile -t SYNC_TARGETS < <(
             git -C "$GITHUB_WORKSPACE" ls-tree -r --name-only "origin/$DEFAULT_BRANCH" -- '.github/workflows' |
-            grep -E "^\\.github/workflows/nanvix-.*\\.ya?ml$" || true
+            grep -E "$SYNC_REGEX" || true
           )
 
           if [ "${#SYNC_TARGETS[@]}" -eq 0 ]; then
@@ -66,8 +115,9 @@ jobs:
             exit 0
           fi
 
+          TARGET_BRANCH_REGEX="^${TARGET_BRANCH_PREFIX//./\.}"
           mapfile -t TARGET_BRANCHES < <(
-            gh api "repos/$REPOSITORY/branches" --paginate --jq '.[].name' | grep '^nanvix/' || true
+            gh api "repos/$REPOSITORY/branches" --paginate --jq '.[].name' | grep -E "$TARGET_BRANCH_REGEX" || true
           )
 
           if [ "${#TARGET_BRANCHES[@]}" -eq 0 ]; then
@@ -77,8 +127,6 @@ jobs:
 
           WORKTREE_ROOT="$RUNNER_TEMP/nanvix-sync-worktrees"
           mkdir -p "$WORKTREE_ROOT"
-          ASSIGNEE_TARGET="ppenna"
-
           ensure_assignment() {
             local pr_number="$1"
             if [ -z "$pr_number" ]; then
