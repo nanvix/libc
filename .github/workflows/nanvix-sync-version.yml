@@ -63,6 +63,17 @@ jobs:
 
           WORKTREE_ROOT="$RUNNER_TEMP/nanvix-sync-worktrees"
           mkdir -p "$WORKTREE_ROOT"
+          ASSIGNEE_TARGET="ppenna"
+
+          ensure_assignment() {
+            local pr_number="$1"
+            if [ -z "$pr_number" ]; then
+              return
+            fi
+            if ! gh pr edit "$pr_number" --repo "$REPOSITORY" --add-assignee "$ASSIGNEE_TARGET" --add-reviewer "$ASSIGNEE_TARGET" >/dev/null; then
+              echo "Warning: could not assign or request review from $ASSIGNEE_TARGET for PR #$pr_number; continuing."
+            fi
+          }
 
           declare -a UPDATED_BRANCHES=()
           declare -a SYNCED_BRANCHES=()
@@ -115,18 +126,20 @@ jobs:
 
               EXISTING_PR=$(gh pr list --repo "$REPOSITORY" --state open --base "$BRANCH" --head "$REPOSITORY_OWNER:$WORK_BRANCH" --json number --jq '.[0].number' || true)
               if [ -n "$EXISTING_PR" ]; then
-                gh pr edit "$EXISTING_PR" --repo "$REPOSITORY" --title "$PR_TITLE" --body "$PR_BODY" --add-assignee ppenna --add-reviewer ppenna >/dev/null
+                gh pr edit "$EXISTING_PR" --repo "$REPOSITORY" --title "$PR_TITLE" --body "$PR_BODY" >/dev/null
+                ensure_assignment "$EXISTING_PR"
                 echo "Updated existing PR #$EXISTING_PR"
               else
-                gh pr create \
+                NEW_PR_NUMBER=$(gh pr create \
                   --repo "$REPOSITORY" \
                   --title "$PR_TITLE" \
                   --body "$PR_BODY" \
                   --base "$BRANCH" \
                   --head "$WORK_BRANCH" \
-                  --assignee ppenna \
-                  --reviewer ppenna >/dev/null
-                echo "Opened PR for $BRANCH"
+                  --json number \
+                  --jq '.number')
+                ensure_assignment "$NEW_PR_NUMBER"
+                echo "Opened PR #$NEW_PR_NUMBER for $BRANCH"
               fi
             else
               echo "Branch $BRANCH already has matching workflow files."
