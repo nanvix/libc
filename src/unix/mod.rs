@@ -58,6 +58,7 @@ s! {
     }
 
     #[derive(Default)]
+    #[cfg(not(target_os = "nanvix"))]
     pub struct timeval {
         pub tv_sec: time_t,
         #[cfg(not(gnu_time_bits64))]
@@ -71,7 +72,7 @@ s! {
     // linux x32 compatibility
     // See https://sourceware.org/bugzilla/show_bug.cgi?id=16437
     #[derive(Default)]
-    #[cfg(not(target_env = "gnu"))]
+    #[cfg(all(not(target_env = "gnu"), not(target_os = "nanvix")))]
     pub struct timespec {
         pub tv_sec: time_t,
         #[cfg(all(musl32_time64, target_endian = "big"))]
@@ -84,11 +85,13 @@ s! {
         __pad0: Padding<u32>,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct rlimit {
         pub rlim_cur: rlim_t,
         pub rlim_max: rlim_t,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct rusage {
         pub ru_utime: timeval,
         pub ru_stime: timeval,
@@ -139,7 +142,7 @@ s! {
         __reserved: Padding<[c_long; 16]>,
     }
 
-    #[cfg(not(target_os = "nuttx"))]
+    #[cfg(not(any(target_os = "nuttx", target_os = "nanvix")))]
     pub struct ipv6_mreq {
         pub ipv6mr_multiaddr: in6_addr,
         #[cfg(target_os = "android")]
@@ -148,7 +151,7 @@ s! {
         pub ipv6mr_interface: c_uint,
     }
 
-    #[cfg(all(not(target_os = "cygwin"), not(target_os = "horizon")))]
+    #[cfg(all(not(target_os = "cygwin"), not(target_os = "horizon"), not(target_os = "nanvix")))]
     pub struct hostent {
         pub h_name: *mut c_char,
         pub h_aliases: *mut *mut c_char,
@@ -157,12 +160,13 @@ s! {
         pub h_addr_list: *mut *mut c_char,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct iovec {
         pub iov_base: *mut c_void,
         pub iov_len: size_t,
     }
 
-    #[cfg(not(target_os = "horizon"))]
+    #[cfg(not(any(target_os = "horizon", target_os = "nanvix")))]
     pub struct pollfd {
         pub fd: c_int,
         pub events: c_short,
@@ -176,7 +180,7 @@ s! {
         pub ws_ypixel: c_ushort,
     }
 
-    #[cfg(not(target_os = "cygwin"))]
+    #[cfg(all(not(target_os = "cygwin"), not(target_os = "nanvix")))]
     pub struct linger {
         pub l_onoff: c_int,
         pub l_linger: c_int,
@@ -188,12 +192,14 @@ s! {
     }
 
     // <sys/time.h>
+    #[cfg(not(target_os = "nanvix"))]
     pub struct itimerval {
         pub it_interval: crate::timeval,
         pub it_value: crate::timeval,
     }
 
     // <sys/times.h>
+    #[cfg(not(target_os = "nanvix"))]
     pub struct tms {
         pub tms_utime: crate::clock_t,
         pub tms_stime: crate::clock_t,
@@ -201,6 +207,7 @@ s! {
         pub tms_cstime: crate::clock_t,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct servent {
         pub s_name: *mut c_char,
         pub s_aliases: *mut *mut c_char,
@@ -211,6 +218,7 @@ s! {
         pub s_proto: *mut c_char,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     pub struct protoent {
         pub p_name: *mut c_char,
         pub p_aliases: *mut *mut c_char,
@@ -220,6 +228,7 @@ s! {
         pub p_proto: c_short,
     }
 
+    #[cfg(not(target_os = "nanvix"))]
     #[repr(align(4))]
     pub struct in6_addr {
         pub s6_addr: [u8; 16],
@@ -1244,6 +1253,7 @@ extern "C" {
 
     pub fn signal(signum: c_int, handler: sighandler_t) -> sighandler_t;
 
+    #[cfg(not(target_os = "nanvix"))]
     #[cfg_attr(target_os = "netbsd", link_name = "__getrusage50")]
     #[cfg_attr(gnu_time_bits64, link_name = "__getrusage64")]
     #[cfg_attr(musl32_time64, link_name = "__getrusage_time64")]
@@ -2481,6 +2491,9 @@ cfg_if! {
     } else if #[cfg(target_os = "nto")] {
         mod nto;
         pub use self::nto::*;
+    } else if #[cfg(target_os = "nanvix")] {
+        mod nanvix;
+        pub use self::nanvix::*;
     } else if #[cfg(target_os = "aix")] {
         mod aix;
         pub use self::aix::*;

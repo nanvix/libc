@@ -222,7 +222,7 @@ cfg_if! {
 
 // Per-family headers we export
 cfg_if! {
-    if #[cfg(all(target_family = "unix", not(target_os = "qurt")))] {
+    if #[cfg(all(target_family = "unix", not(target_os = "qurt"), not(target_os = "nanvix")))] {
         // FIXME(pthread): eventually all platforms should use this module
         #[cfg(any(
             target_os = "android",

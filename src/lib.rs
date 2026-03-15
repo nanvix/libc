@@ -30,7 +30,11 @@
 #![cfg_attr(feature = "rustc-dep-of-std", allow(unused_features))]
 // DIFF(1.0): The thread local references that raise this lint were removed in 1.0
 #![cfg_attr(feature = "rustc-dep-of-std", allow(static_mut_refs))]
-#![cfg_attr(not(feature = "rustc-dep-of-std"), no_std)]
+#![cfg_attr(
+    all(not(feature = "rustc-dep-of-std"), not(target_os = "nanvix")),
+    no_std
+)]
+#![cfg_attr(target_os = "nanvix", feature(rustc_private))]
 #![cfg_attr(feature = "rustc-dep-of-std", no_core)]
 
 #[macro_use]

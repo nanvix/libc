@@ -1,0 +1,13 @@
+pub use std::os::nanvix::syscall::sysapi::sys_socket::bind;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::linger;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::recvfrom;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::sa_family_t;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::sockaddr;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::sockaddr_storage;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::socket_address_family::*;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::socket_shutdown_how::*;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::socket_types::*;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::socklen_t;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::sockopt_option_names::*;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::SOL_SOCKET;
+pub use std::os::nanvix::syscall::sysapi::sys_socket::SOMAXCONN;
